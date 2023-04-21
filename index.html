@@ -86,6 +86,8 @@
         }
         let size=0;
         let price=0;
+        let labor=40;
+        let busniess=15;
         size=(length*width)+(length*height*2)+(width*height);
         if(roof){
             size=size-(length*width/3);
@@ -95,12 +97,12 @@
 
         if(identity === "1") {
             //round to integer
-            price=Math.round(size*40/10*100)/100;
+            price=Math.round(size*labor/10*100)/100;
 
         alert("Your cost of labor is " + price);
         }else if(identity === "2") {
             //round to integer
-            price=Math.round(size*15*100)/100;
+            price=Math.round(size*busniess*100)/100;
             let size2=Math.round((size+5)/5*100)/100;
             alert("Your should charge customer " + price +" and order at least "+size2 +" feet");
         }
