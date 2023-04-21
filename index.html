@@ -5,6 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script defer src="js/main.js"></script>
     <title>Stefan's Tool</title>
     <style>
         body {
@@ -20,6 +21,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+
         }
 
         input[type="number"] {
@@ -33,7 +35,9 @@
             height: 40px;
         }
         option{
-            
+            width: 200px;
+            height: 40px;
+        }
     </style>
 </head>
 <body>
@@ -61,6 +65,10 @@
             <option value="1">Stefan</option>
             <option value="2">Paul</option>
         </select>
+        
+    </label>
+    <label>
+        <input type="checkbox" id="isRoof" >NoRoof
     </label>
     <br/>
     <button type="button" id="calculateButton">计算</button>
@@ -71,6 +79,7 @@
         const width = parseFloat(document.getElementById("width").value);
         const height = parseFloat(document.getElementById("height").value);
         const identity = document.getElementById("identity").value;
+        const roof = document.getElementById("isRoof").checked;
         if (isNaN(length) || isNaN(width) || isNaN(height)) {
             alert("请输入有效的长宽高值");
             return;
@@ -78,16 +87,20 @@
         let size=0;
         let price=0;
         size=(length*width)+(length*height*2)+(width*height);
+        if(roof){
+            size=size-(length*width/3);
+        }
         //trans price from square millimeter to square feet
         size=size/100000;
 
         if(identity === "1") {
             //round to integer
             price=Math.round(size*45/10*100)/100;
+
         alert("Your cost of labor is " + price);
         }else if(identity === "2") {
             //round to integer
-            price=Math.round(size*16*100)/100;
+            price=Math.round(size*15*100)/100;
             let size2=Math.round((size+5)/5*100)/100;
             alert("Your should charge customer " + price +" and order at least "+size2 +" feet");
         }
