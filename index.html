@@ -1,0 +1,94 @@
+<!
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Stefan's Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="number"] {
+            margin: 5px;
+            width: 100px;
+        }
+        select{
+            margin: 5px;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="calculationForm">
+    <h1>贴膜费率计算器</h1>
+    <label>
+        长度:
+        <input type="number" id="length" min="0" step="any" required>
+        mm
+    </label>
+    <label>
+        宽度:
+        <input type="number" id="width" min="0" step="any" required>
+        mm
+    </label>
+    <label>
+        高度:
+        <input type="number" id="height" min="0" step="any" required>
+        mm
+    </label>
+    <label>
+        身份
+        <select name="identity" id="identity">
+            <option value="1">Stefan</option>
+            <option value="2">Paul</option>
+        </select>
+    </label>
+    <br/>
+    <button type="button" id="calculateButton">计算</button>
+</form>
+<script>
+    document.getElementById("calculateButton").addEventListener("click", function() {
+        const length = parseFloat(document.getElementById("length").value);
+        const width = parseFloat(document.getElementById("width").value);
+        const height = parseFloat(document.getElementById("height").value);
+        const identity = document.getElementById("identity").value;
+        if (isNaN(length) || isNaN(width) || isNaN(height)) {
+            alert("请输入有效的长宽高值");
+            return;
+        }
+        let size=0;
+        let price=0;
+        size=(length*width)+(length*height*2)+(width*height);
+        //trans price from square millimeter to square feet
+        size=size/100000;
+
+        if(identity === "1") {
+            //round to integer
+            price=Math.round(size*45/10*100)/100;
+        alert("Your cost of labor is " + price);
+        }else if(identity === "2") {
+            //round to integer
+            price=Math.round(size*15*100)/100;
+            let size2=Math.round((size+5)/5*100)/100;
+            alert("Your should charge customer " + price +" and order at least "+size2 +" feet");
+        }
+
+    });
+</script>
+</body>
+</html>
