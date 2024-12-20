@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Pairing</title>
+    <style>
+        .name-list {
+            margin-top: 20px;
+        }
+        .pair-item {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Gift Pairing</h1>
+    <form id="nameForm">
+        <label for="name">Enter name :</label>
+        <input type="text" id="name" required>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="message"></div>
+
+    <div id="result">
+        <h2>Current Pairings:</h2>
+        <ul id="pairings"></ul>
+        <button id="repairButton" style="display: none;">Re-shuffle Pairs</button>
+        
+        <div class="name-list">
+            <h3>Entered Names:</h3>
+            <ul id="namesList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const nameForm = document.getElementById('nameForm');
+        const nameInput = document.getElementById('name');
+        const messageDiv = document.getElementById('message');
+        const pairingsList = document.getElementById('pairings');
+        const namesList = document.getElementById('namesList');
+        const repairButton = document.getElementById('repairButton');
+        
+        let names = [];
+        const MAX_PARTICIPANTS = 8;
+
+        function updateNamesList() {
+            namesList.innerHTML = '';
+            names.forEach(name => {
+                const li = document.createElement('li');
+                li.textContent = name;
+                namesList.appendChild(li);
+            });
+        }
+
+        function pairNames(nameArray) {
+            const shuffled = [...nameArray];
+            // Fisher-Yates shuffle
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            
+            const pairs = [];
+            for (let i = 0; i < shuffled.length; i += 2) {
+                pairs.push([shuffled[i], shuffled[i + 1]]);
+            }
+            return pairs;
+        }
+
+        function displayPairings(pairs) {
+            pairingsList.innerHTML = '';
+            pairs.forEach(pair => {
+                const li = document.createElement('li');
+                li.className = 'pair-item';
+                li.textContent = `${pair[0]} gives a gift to ${pair[1]}`;
+                pairingsList.appendChild(li);
+            });
+        }
+
+        nameForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newName = nameInput.value.trim();
+            
+            if (names.includes(newName)) {
+                messageDiv.textContent = 'This name has already been entered!';
+                return;
+            }
+
+            if (names.length >= MAX_PARTICIPANTS) {
+                messageDiv.textContent = 'Maximum number of participants reached!';
+                return;
+            }
+
+            names.push(newName);
+            nameInput.value = '';
+            updateNamesList();
+            
+            messageDiv.textContent = `Name added! (${names.length}/${MAX_PARTICIPANTS})`;
+
+            if (names.length === MAX_PARTICIPANTS) {
+                const pairs = pairNames(names);
+                displayPairings(pairs);
+                repairButton.style.display = 'block';
+                messageDiv.textContent = 'All participants added! Pairings generated!';
+            }
+        });
+
+        repairButton.addEventListener('click', () => {
+            const pairs = pairNames(names);
+            displayPairings(pairs);
+            messageDiv.textContent = 'Pairings reshuffled!';
+        });
+    </script>
+</body>
+</html>
