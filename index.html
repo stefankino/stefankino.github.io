@@ -5,11 +5,174 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gift Pairing</title>
     <style>
-        .name-list {
-            margin-top: 20px;
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
         }
+
+        body {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        #nameForm {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input[type="text"] {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        #repairButton {
+            background-color: var(--accent-color);
+            margin: 20px auto;
+            display: block;
+        }
+
+        #repairButton:hover {
+            background-color: #c0392b;
+        }
+
+        #message {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .name-list {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
         .pair-item {
             margin: 10px 0;
+            padding: 15px;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .pair-item:hover {
+            transform: translateX(5px);
+        }
+
+        .name-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin: 5px 0;
+            transition: background-color 0.2s ease;
+        }
+
+        .name-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .remove-btn {
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            transform: scale(1.2);
+        }
+
+        #namesList {
+            list-style: none;
+            padding: 0;
+        }
+
+        #pairings {
+            list-style: none;
+            padding: 0;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            #nameForm {
+                padding: 15px;
+            }
+
+            .pair-item {
+                padding: 10px;
+            }
         }
     </style>
 </head>
@@ -44,27 +207,71 @@
         let names = [];
         const MAX_PARTICIPANTS = 8;
 
+        function saveToLocalStorage() {
+            localStorage.setItem('giftPairingNames', JSON.stringify(names));
+        }
+
+        function loadFromLocalStorage() {
+            const savedNames = localStorage.getItem('giftPairingNames');
+            if (savedNames) {
+                names = JSON.parse(savedNames);
+                updateNamesList();
+                if (names.length === MAX_PARTICIPANTS) {
+                    const pairs = pairNames(names);
+                    displayPairings(pairs);
+                    repairButton.style.display = 'block';
+                }
+            }
+        }
+
         function updateNamesList() {
             namesList.innerHTML = '';
-            names.forEach(name => {
+            names.forEach((name, index) => {
                 const li = document.createElement('li');
-                li.textContent = name;
+                li.className = 'name-item';
+                li.innerHTML = `
+                    ${name} 
+                    <span class="remove-btn" onclick="removeName(${index})">❌</span>
+                `;
                 namesList.appendChild(li);
             });
+            saveToLocalStorage();
+        }
+
+        function removeName(index) {
+            names.splice(index, 1);
+            updateNamesList();
+            if (names.length < MAX_PARTICIPANTS) {
+                pairingsList.innerHTML = '';
+                repairButton.style.display = 'none';
+                messageDiv.textContent = `Name removed! (${names.length}/${MAX_PARTICIPANTS})`;
+            }
         }
 
         function pairNames(nameArray) {
             const shuffled = [...nameArray];
-            // Fisher-Yates shuffle
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            let valid = false;
+            let attempts = 0;
+            let pairs;
+
+            while (!valid && attempts < 100) {
+                // Fisher-Yates shuffle
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                
+                // Create circular pairing
+                pairs = shuffled.map((name, i) => {
+                    const nextIndex = (i + 1) % shuffled.length;
+                    return [name, shuffled[nextIndex]];
+                });
+
+                // Check if no one is paired with themselves
+                valid = pairs.every(pair => pair[0] !== pair[1]);
+                attempts++;
             }
-            
-            const pairs = [];
-            for (let i = 0; i < shuffled.length; i += 2) {
-                pairs.push([shuffled[i], shuffled[i + 1]]);
-            }
+
             return pairs;
         }
 
@@ -82,6 +289,11 @@
             e.preventDefault();
             const newName = nameInput.value.trim();
             
+            if (newName.length < 2) {
+                messageDiv.textContent = 'Name must be at least 2 characters long!';
+                return;
+            }
+
             if (names.includes(newName)) {
                 messageDiv.textContent = 'This name has already been entered!';
                 return;
@@ -111,6 +323,8 @@
             displayPairings(pairs);
             messageDiv.textContent = 'Pairings reshuffled!';
         });
+
+        loadFromLocalStorage();
     </script>
 </body>
 </html>
