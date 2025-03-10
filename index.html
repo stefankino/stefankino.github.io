@@ -1,330 +1,592 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gift Pairing</title>
+    <title>数独游戏</title>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --background-color: #ecf0f1;
-            --card-background: #ffffff;
-        }
-
         body {
-            max-width: 800px;
-            margin: 0 auto;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+            margin: 0;
             padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            color: var(--primary-color);
-            line-height: 1.6;
         }
-
-        h1, h2, h3 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
+        
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            border-bottom: 3px solid var(--secondary-color);
-            padding-bottom: 0.5rem;
+            color: #333;
+            margin-bottom: 10px;
         }
-
-        #nameForm {
-            background: var(--card-background);
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .controls {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .timer, .difficulty {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            grid-gap: 1px;
+            background-color: #333;
+            border: 2px solid #333;
+            width: 450px;
+            height: 450px;
+        }
+        
+        .cell {
+            display: flex;
             align-items: center;
             justify-content: center;
+            background-color: white;
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
         }
-
-        input[type="text"] {
-            padding: 10px 15px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            flex: 1;
-            min-width: 200px;
-            transition: border-color 0.3s ease;
+        
+        .cell:hover {
+            background-color: #f0f0f0;
         }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--secondary-color);
+        
+        .cell.selected {
+            background-color: #e0f7fa;
         }
-
-        button {
-            padding: 10px 20px;
-            background-color: var(--secondary-color);
-            color: white;
+        
+        .cell.fixed {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .cell.error {
+            color: red;
+        }
+        
+        .cell.hint {
+            color: green;
+        }
+        
+        /* 3x3 区域边框 */
+        .cell[data-col="2"], .cell[data-col="5"] {
+            border-right: 2px solid #333;
+        }
+        
+        .cell[data-row="2"], .cell[data-row="5"] {
+            border-bottom: 2px solid #333;
+        }
+        
+        .number-pad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 5px;
+            margin-top: 20px;
+            width: 300px;
+        }
+        
+        .number-btn, .action-btn {
+            padding: 10px;
+            font-size: 18px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.2s ease, background-color 0.2s ease;
+            background-color: #e0e0e0;
         }
-
-        button:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
+        
+        .number-btn:hover, .action-btn:hover {
+            background-color: #d0d0d0;
         }
-
-        #repairButton {
-            background-color: var(--accent-color);
-            margin: 20px auto;
-            display: block;
+        
+        .action-btn {
+            background-color: #4caf50;
+            color: white;
+            grid-column: span 2;
         }
-
-        #repairButton:hover {
-            background-color: #c0392b;
+        
+        .action-btn.danger {
+            background-color: #f44336;
         }
-
-        #message {
-            text-align: center;
+        
+        .action-btn.warning {
+            background-color: #ff9800;
+        }
+        
+        .action-btn.info {
+            background-color: #2196f3;
+        }
+        
+        .message {
+            margin-top: 20px;
             padding: 10px;
-            margin: 10px 0;
             border-radius: 5px;
-            font-weight: bold;
+            display: none;
         }
-
-        .name-list {
-            background: var(--card-background);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 2rem;
+        
+        .message.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #2e7d32;
         }
-
-        .pair-item {
-            margin: 10px 0;
-            padding: 15px;
-            background-color: var(--card-background);
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease;
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        .pair-item:hover {
-            transform: translateX(5px);
-        }
-
-        .name-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            margin: 5px 0;
-            transition: background-color 0.2s ease;
-        }
-
-        .name-item:hover {
-            background-color: #e9ecef;
-        }
-
-        .remove-btn {
-            color: var(--accent-color);
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
-            transition: transform 0.2s ease;
-        }
-
-        .remove-btn:hover {
-            transform: scale(1.2);
-        }
-
-        #namesList {
-            list-style: none;
-            padding: 0;
-        }
-
-        #pairings {
-            list-style: none;
-            padding: 0;
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            #nameForm {
-                padding: 15px;
-            }
-
-            .pair-item {
-                padding: 10px;
-            }
+        
+        .message.error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #c62828;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to Gift Pairing</h1>
-    <form id="nameForm">
-        <label for="name">Enter name :</label>
-        <input type="text" id="name" required>
-        <button type="submit">Submit</button>
-    </form>
-    <div id="message"></div>
-
-    <div id="result">
-        <h2>Current Pairings:</h2>
-        <ul id="pairings"></ul>
-        <button id="repairButton" style="display: none;">Re-shuffle Pairs</button>
-        
-        <div class="name-list">
-            <h3>Entered Names:</h3>
-            <ul id="namesList"></ul>
+    <h1>数独游戏</h1>
+    <div class="game-container">
+        <div class="info">
+            <div class="timer">时间: 00:00</div>
+            <div class="difficulty">难度: 中等</div>
         </div>
+        <div class="controls">
+            <button id="new-game" class="action-btn">新游戏</button>
+            <select id="difficulty-select">
+                <option value="easy">简单</option>
+                <option value="medium" selected>中等</option>
+                <option value="hard">困难</option>
+                <option value="expert">专家</option>
+            </select>
+            <button id="check" class="action-btn info">检查</button>
+            <button id="hint" class="action-btn warning">提示</button>
+            <button id="solve" class="action-btn danger">解答</button>
+        </div>
+        <div class="sudoku-grid" id="grid"></div>
+        <div class="number-pad">
+            <button class="number-btn" data-number="1">1</button>
+            <button class="number-btn" data-number="2">2</button>
+            <button class="number-btn" data-number="3">3</button>
+            <button class="number-btn" data-number="4">4</button>
+            <button class="number-btn" data-number="5">5</button>
+            <button class="number-btn" data-number="6">6</button>
+            <button class="number-btn" data-number="7">7</button>
+            <button class="number-btn" data-number="8">8</button>
+            <button class="number-btn" data-number="9">9</button>
+            <button class="number-btn" data-number="0">清除</button>
+        </div>
+        <div id="message" class="message"></div>
     </div>
 
     <script>
-        const nameForm = document.getElementById('nameForm');
-        const nameInput = document.getElementById('name');
-        const messageDiv = document.getElementById('message');
-        const pairingsList = document.getElementById('pairings');
-        const namesList = document.getElementById('namesList');
-        const repairButton = document.getElementById('repairButton');
-        
-        let names = [];
-        const MAX_PARTICIPANTS = 8;
+        // 游戏状态
+        const gameState = {
+            board: Array(9).fill().map(() => Array(9).fill(0)),
+            solution: Array(9).fill().map(() => Array(9).fill(0)),
+            fixed: Array(9).fill().map(() => Array(9).fill(false)),
+            selectedCell: null,
+            startTime: null,
+            timerInterval: null,
+            difficulty: 'medium',
+            hintsUsed: 0
+        };
 
-        function saveToLocalStorage() {
-            localStorage.setItem('giftPairingNames', JSON.stringify(names));
+        // DOM 元素
+        const grid = document.getElementById('grid');
+        const timerDisplay = document.querySelector('.timer');
+        const difficultyDisplay = document.querySelector('.difficulty');
+        const difficultySelect = document.getElementById('difficulty-select');
+        const newGameBtn = document.getElementById('new-game');
+        const checkBtn = document.getElementById('check');
+        const hintBtn = document.getElementById('hint');
+        const solveBtn = document.getElementById('solve');
+        const messageDiv = document.getElementById('message');
+        const numberBtns = document.querySelectorAll('.number-btn');
+
+        // 初始化游戏
+        function initGame() {
+            createGrid();
+            newGame();
+            
+            // 事件监听器
+            newGameBtn.addEventListener('click', newGame);
+            checkBtn.addEventListener('click', checkSolution);
+            hintBtn.addEventListener('click', getHint);
+            solveBtn.addEventListener('click', showSolution);
+            difficultySelect.addEventListener('change', () => {
+                gameState.difficulty = difficultySelect.value;
+                difficultyDisplay.textContent = `难度: ${getDifficultyText()}`;
+            });
+            
+            numberBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (gameState.selectedCell) {
+                        const number = parseInt(btn.dataset.number);
+                        const [row, col] = gameState.selectedCell;
+                        if (!gameState.fixed[row][col]) {
+                            gameState.board[row][col] = number;
+                            updateGrid();
+                            
+                            // 检查是否完成
+                            if (isBoardFilled() && isCorrect()) {
+                                showMessage('恭喜！你成功解决了这个数独！', 'success');
+                                stopTimer();
+                            }
+                        }
+                    }
+                });
+            });
         }
 
-        function loadFromLocalStorage() {
-            const savedNames = localStorage.getItem('giftPairingNames');
-            if (savedNames) {
-                names = JSON.parse(savedNames);
-                updateNamesList();
-                if (names.length === MAX_PARTICIPANTS) {
-                    const pairs = pairNames(names);
-                    displayPairings(pairs);
-                    repairButton.style.display = 'block';
+        // 创建网格
+        function createGrid() {
+            grid.innerHTML = '';
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    cell.addEventListener('click', () => {
+                        // 取消之前选中的单元格
+                        if (gameState.selectedCell) {
+                            const [prevRow, prevCol] = gameState.selectedCell;
+                            document.querySelector(`.cell[data-row="${prevRow}"][data-col="${prevCol}"]`).classList.remove('selected');
+                        }
+                        
+                        // 选中当前单元格
+                        gameState.selectedCell = [row, col];
+                        cell.classList.add('selected');
+                    });
+                    
+                    grid.appendChild(cell);
                 }
             }
         }
 
-        function updateNamesList() {
-            namesList.innerHTML = '';
-            names.forEach((name, index) => {
-                const li = document.createElement('li');
-                li.className = 'name-item';
-                li.innerHTML = `
-                    ${name} 
-                    <span class="remove-btn" onclick="removeName(${index})">❌</span>
-                `;
-                namesList.appendChild(li);
-            });
-            saveToLocalStorage();
-        }
-
-        function removeName(index) {
-            names.splice(index, 1);
-            updateNamesList();
-            if (names.length < MAX_PARTICIPANTS) {
-                pairingsList.innerHTML = '';
-                repairButton.style.display = 'none';
-                messageDiv.textContent = `Name removed! (${names.length}/${MAX_PARTICIPANTS})`;
+        // 更新网格显示
+        function updateGrid() {
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                    const value = gameState.board[row][col];
+                    
+                    cell.textContent = value === 0 ? '' : value;
+                    cell.classList.remove('fixed', 'error', 'hint');
+                    
+                    if (gameState.fixed[row][col]) {
+                        cell.classList.add('fixed');
+                    }
+                }
             }
         }
 
-        function pairNames(nameArray) {
-            const shuffled = [...nameArray];
-            let valid = false;
-            let attempts = 0;
-            let pairs;
+        // 开始新游戏
+        function newGame() {
+            stopTimer();
+            resetGameState();
+            generateSudoku();
+            updateGrid();
+            startTimer();
+            hideMessage();
+        }
 
-            while (!valid && attempts < 100) {
-                // Fisher-Yates shuffle
-                for (let i = shuffled.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        // 重置游戏状态
+        function resetGameState() {
+            gameState.board = Array(9).fill().map(() => Array(9).fill(0));
+            gameState.solution = Array(9).fill().map(() => Array(9).fill(0));
+            gameState.fixed = Array(9).fill().map(() => Array(9).fill(false));
+            gameState.selectedCell = null;
+            gameState.hintsUsed = 0;
+        }
+
+        // 生成数独
+        function generateSudoku() {
+            // 生成完整解决方案
+            generateSolution(0, 0);
+            
+            // 复制解决方案
+            gameState.solution = gameState.board.map(row => [...row]);
+            
+            // 根据难度移除数字
+            const cellsToRemove = getDifficultyRemovalCount();
+            removeNumbers(cellsToRemove);
+            
+            // 标记固定单元格
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    gameState.fixed[row][col] = gameState.board[row][col] !== 0;
+                }
+            }
+        }
+
+        // 递归生成有效的数独解决方案
+        function generateSolution(row, col) {
+            if (row === 9) {
+                return true;
+            }
+            
+            if (col === 9) {
+                return generateSolution(row + 1, 0);
+            }
+            
+            const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            shuffleArray(numbers);
+            
+            for (const num of numbers) {
+                if (isValidPlacement(row, col, num)) {
+                    gameState.board[row][col] = num;
+                    
+                    if (generateSolution(row, col + 1)) {
+                        return true;
+                    }
+                    
+                    gameState.board[row][col] = 0;
+                }
+            }
+            
+            return false;
+        }
+
+        // 检查放置数字是否有效
+        function isValidPlacement(row, col, num) {
+            // 检查行
+            for (let c = 0; c < 9; c++) {
+                if (gameState.board[row][c] === num) {
+                    return false;
+                }
+            }
+            
+            // 检查列
+            for (let r = 0; r < 9; r++) {
+                if (gameState.board[r][col] === num) {
+                    return false;
+                }
+            }
+            
+            // 检查3x3方格
+            const boxRow = Math.floor(row / 3) * 3;
+            const boxCol = Math.floor(col / 3) * 3;
+            
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    if (gameState.board[boxRow + r][boxCol + c] === num) {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
+        }
+
+        // 随机打乱数组
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // 根据难度移除数字
+        function removeNumbers(count) {
+            const positions = [];
+            
+            // 创建所有位置的列表
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    positions.push([row, col]);
+                }
+            }
+            
+            // 随机打乱位置
+            shuffleArray(positions);
+            
+            // 移除指定数量的数字
+            for (let i = 0; i < count && i < positions.length; i++) {
+                const [row, col] = positions[i];
+                gameState.board[row][col] = 0;
+            }
+        }
+
+        // 根据难度获取要移除的单元格数量
+        function getDifficultyRemovalCount() {
+            switch (gameState.difficulty) {
+                case 'easy': return 30;
+                case 'medium': return 40;
+                case 'hard': return 50;
+                case 'expert': return 60;
+                default: return 40;
+            }
+        }
+
+        // 获取难度文本
+        function getDifficultyText() {
+            switch (gameState.difficulty) {
+                case 'easy': return '简单';
+                case 'medium': return '中等';
+                case 'hard': return '困难';
+                case 'expert': return '专家';
+                default: return '中等';
+            }
+        }
+
+        // 检查解答
+        function checkSolution() {
+            let hasError = false;
+            
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                    cell.classList.remove('error');
+                    
+                    if (gameState.board[row][col] !== 0 && gameState.board[row][col] !== gameState.solution[row][col]) {
+                        cell.classList.add('error');
+                        hasError = true;
+                    }
+                }
+            }
+            
+            if (hasError) {
+                showMessage('有些数字不正确，请检查标红的单元格。', 'error');
+            } else if (isBoardFilled()) {
+                showMessage('恭喜！你成功解决了这个数独！', 'success');
+                stopTimer();
+            } else {
+                showMessage('到目前为止一切正确，继续加油！', 'success');
+            }
+        }
+
+        // 获取提示
+        function getHint() {
+            if (!gameState.selectedCell) {
+                showMessage('请先选择一个单元格获取提示。', 'error');
+                return;
+            }
+            
+            const [row, col] = gameState.selectedCell;
+            
+            if (gameState.fixed[row][col]) {
+                showMessage('这是一个固定的单元格，不能修改。', 'error');
+                return;
+            }
+            
+            if (gameState.board[row][col] === gameState.solution[row][col]) {
+                showMessage('这个单元格已经正确了！', 'success');
+                return;
+            }
+            
+            gameState.board[row][col] = gameState.solution[row][col];
+            gameState.hintsUsed++;
+            
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            cell.classList.add('hint');
+            
+            updateGrid();
+            
+            if (isBoardFilled() && isCorrect()) {
+                showMessage('恭喜！你成功解决了这个数独！', 'success');
+                stopTimer();
+            }
+        }
+
+        // 显示完整解答
+        function showSolution() {
+            if (confirm('确定要查看完整解答吗？这将结束当前游戏。')) {
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        gameState.board[row][col] = gameState.solution[row][col];
+                    }
                 }
                 
-                // Create circular pairing
-                pairs = shuffled.map((name, i) => {
-                    const nextIndex = (i + 1) % shuffled.length;
-                    return [name, shuffled[nextIndex]];
-                });
-
-                // Check if no one is paired with themselves
-                valid = pairs.every(pair => pair[0] !== pair[1]);
-                attempts++;
+                updateGrid();
+                stopTimer();
+                showMessage('这是完整的解答。点击"新游戏"开始新的挑战！', 'info');
             }
-
-            return pairs;
         }
 
-        function displayPairings(pairs) {
-            pairingsList.innerHTML = '';
-            pairs.forEach(pair => {
-                const li = document.createElement('li');
-                li.className = 'pair-item';
-                li.textContent = `${pair[0]} gives a gift to ${pair[1]}`;
-                pairingsList.appendChild(li);
-            });
+        // 检查棋盘是否填满
+        function isBoardFilled() {
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    if (gameState.board[row][col] === 0) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
-        nameForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newName = nameInput.value.trim();
+        // 检查当前棋盘是否正确
+        function isCorrect() {
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    if (gameState.board[row][col] !== gameState.solution[row][col]) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // 开始计时器
+        function startTimer() {
+            gameState.startTime = new Date();
+            gameState.timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        // 停止计时器
+        function stopTimer() {
+            clearInterval(gameState.timerInterval);
+        }
+
+        // 更新计时器显示
+        function updateTimer() {
+            const now = new Date();
+            const elapsed = Math.floor((now - gameState.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `时间: ${minutes}:${seconds}`;
+        }
+
+        // 显示消息
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
             
-            if (newName.length < 2) {
-                messageDiv.textContent = 'Name must be at least 2 characters long!';
-                return;
-            }
+            // 5秒后自动隐藏
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
 
-            if (names.includes(newName)) {
-                messageDiv.textContent = 'This name has already been entered!';
-                return;
-            }
+        // 隐藏消息
+        function hideMessage() {
+            messageDiv.style.display = 'none';
+        }
 
-            if (names.length >= MAX_PARTICIPANTS) {
-                messageDiv.textContent = 'Maximum number of participants reached!';
-                return;
-            }
-
-            names.push(newName);
-            nameInput.value = '';
-            updateNamesList();
-            
-            messageDiv.textContent = `Name added! (${names.length}/${MAX_PARTICIPANTS})`;
-
-            if (names.length === MAX_PARTICIPANTS) {
-                const pairs = pairNames(names);
-                displayPairings(pairs);
-                repairButton.style.display = 'block';
-                messageDiv.textContent = 'All participants added! Pairings generated!';
-            }
-        });
-
-        repairButton.addEventListener('click', () => {
-            const pairs = pairNames(names);
-            displayPairings(pairs);
-            messageDiv.textContent = 'Pairings reshuffled!';
-        });
-
-        loadFromLocalStorage();
+        // 初始化游戏
+        window.addEventListener('DOMContentLoaded', initGame);
     </script>
 </body>
 </html>
