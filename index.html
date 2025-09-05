@@ -385,7 +385,7 @@
               </div>
             </div>
           </div>
-          <div class="h-28 bg-gradient-to-br from-blue-50 to-indigo-50 grid place-items-center text-sm text-blue-700 border-t">地图预览 Map preview</div>
+          <div class="h-28 bg-gradient-to-br from-blue-50 to-indigo-50 grid place-items-center text-sm text-blue-700 border-t">Map preview</div>
 
           <div class="p-4 grid grid-cols-2 gap-2">
             <button id="openPay" class="rounded-xl border py-2.5 font-medium hover:bg-neutral-50">Pay</button>
@@ -703,7 +703,7 @@
           <div class="mt-2 h-32 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl flex items-center justify-center text-sm text-blue-700">
             <div class="text-center">
               <div class="text-lg mb-1">🗺️</div>
-              <div>地图预览 Map Preview</div>
+              <div>Map Preview</div>
               <div class="text-xs text-blue-600 mt-1">Click to view detailed route</div>
             </div>
           </div>
@@ -2237,12 +2237,12 @@ function openPricing(){
   const cg = caregivers[matchIdx % caregivers.length];
   const p = pricing(cg.rate, hrs, $("#bkAddr").value, $("#coupon").value.trim());
   const ul = $("#priceBreak"); ul.innerHTML = `
-    <li>基础费 Base (${cg.rate}/h × ${hrs}h) <span class="float-right">${money(p.base)}</span></li>
-    <li>夜间附加 Night <span class="float-right">${money(p.night)}</span></li>
-    <li>远距加价 Distance <span class="float-right">${money(p.distance)}</span></li>
-    <li>平台费 Platform 8% <span class="float-right">${money(p.platform)}</span></li>
-    ${p.coupon?`<li>优惠券 Coupon <span class="float-right">${money(p.coupon)}</span></li>`:""}
-    <li>税 Tax(15%) <span class="float-right">${money(p.tax)}</span></li>
+    <li>Base (${cg.rate}/h × ${hrs}h) <span class="float-right">${money(p.base)}</span></li>
+    <li>Night <span class="float-right">${money(p.night)}</span></li>
+    <li>Distance <span class="float-right">${money(p.distance)}</span></li>
+    <li>Platform 8% <span class="float-right">${money(p.platform)}</span></li>
+    ${p.coupon?`<li>Coupon <span class="float-right">${money(p.coupon)}</span></li>`:""}
+    <li>Tax(15%) <span class="float-right">${money(p.tax)}</span></li>
   `;
   $("#priceTotal").textContent = money(p.total);
   $("#priceToPay").onclick = ()=> { 
@@ -2396,7 +2396,7 @@ function refreshOrders(){
         <div class="text-sm font-medium">${o.service} • ${o.hours}h • ${o.status}</div>
         <div class="text-xs text-neutral-500">${o.caregiver} · ${o.date} ${o.time}</div>
       </div>
-      <button class="rounded-lg border px-2 py-1 text-xs" data-order="${o.id}">详情</button>
+      <button class="rounded-lg border px-2 py-1 text-xs" data-order="${o.id}">Details</button>
     `;
     row.querySelector("button").addEventListener("click",()=> openOrderDetail(o));
     ul && ul.appendChild(row);
