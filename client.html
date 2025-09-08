@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Asclepius - Client</title>
+
+<!-- Tailwind (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: { brand: { DEFAULT:'#2563eb', 600:'#2563eb', 700:'#1d4ed8' } },
+        boxShadow: { glass: '0 10px 30px rgba(0,0,0,.12)' }
+      }
+    }
+  }
+</script>
+
+<!-- Preline UI -->
+<link rel="stylesheet" href="https://unpkg.com/preline/dist/preline.css">
+<script defer src="https://unpkg.com/preline/dist/preline.js"></script>
+
+<style>
+  .phone { max-width: 420px; }
+  .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 74px); }
+  .safe-footer { height: calc(env(safe-area-inset-bottom) + 62px); }
+  .tap { min-height: 44px; }
+  .chip { @apply inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-medium; }
+</style>
+</head>
+<body class="bg-neutral-50 text-neutral-900 antialiased">
+
+<!-- App Shell -->
+<div class="mx-auto phone min-h-screen bg-white shadow-lg flex flex-col">
+
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-40 border-b bg-white/90 backdrop-blur">
+    <div class="h-14 px-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="flex items-center gap-2">
+          <div class="size-8 grid place-items-center rounded-xl bg-blue-50 text-blue-600 font-bold">C</div>
+          <div class="font-semibold">Asclepius</div>
+          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Demo</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">Client</span>
+        <a href="caregiver.html" class="text-xs text-neutral-500">Switch to Caregiver</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="flex-1 px-3 safe-bottom">
+
+    <!-- ========== CLIENT (客户端) ========== -->
+    <section id="role-client" class="space-y-3">
+
+      <!-- SubTabs -->
+      <nav class="grid grid-cols-5 gap-1 p-1 rounded-xl bg-neutral-100 sticky top-14 z-30">
+        <button data-sub="c-home" class="c-sub px-3 py-2 text-xs rounded-lg bg-white shadow-sm" onclick="showClientSub('c-home')">Home</button>
+        <button data-sub="c-services" class="c-sub px-3 py-2 text-xs rounded-lg" onclick="showClientSub('c-services')">Services</button>
+        <button data-sub="c-book" class="c-sub px-3 py-2 text-xs rounded-lg" onclick="showClientSub('c-book')">Book</button>
+        <button data-sub="c-orders" class="c-sub px-3 py-2 text-xs rounded-lg" onclick="showClientSub('c-orders')">Orders</button>
+        <button data-sub="c-me" class="c-sub px-3 py-2 text-xs rounded-lg" onclick="showClientSub('c-me')">Profile</button>
+      </nav>
+
+      <!-- HOME -->
+      <div id="c-home" class="space-y-3">
+        <!-- Service Categories -->
+        <div class="rounded-2xl border bg-white p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold">Care Services</h3>
+            <div class="flex items-center gap-2">
+              <button onclick="showAllServices()" class="text-xs text-blue-600">View All</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="rounded-xl border p-4 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all" onclick="selectService('Home Care')">
+              <div class="flex items-center gap-3">
+                <div class="size-10 grid place-items-center rounded-lg bg-blue-100 text-blue-600">
+                  <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <div class="font-medium text-sm">CCA Care</div>
+                  <div class="text-xs text-neutral-500">Daily living assistance</div>
+                  <div class="text-xs text-green-600 font-medium">From $28/h</div>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-xl border p-4 cursor-pointer hover:bg-green-50 hover:border-green-300 transition-all" onclick="selectService('Nursing')">
+              <div class="flex items-center gap-3">
+                <div class="size-10 grid place-items-center rounded-lg bg-green-100 text-green-600">
+                  <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <div class="font-medium text-sm">LPN Nursing</div>
+                  <div class="text-xs text-neutral-500">Medical care & monitoring</div>
+                  <div class="text-xs text-green-600 font-medium">From $52/h</div>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-xl border p-4 cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-all" onclick="selectService('Companion')">
+              <div class="flex items-center gap-3">
+                <div class="size-10 grid place-items-center rounded-lg bg-purple-100 text-purple-600">
+                  <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <div class="font-medium text-sm">Sitter</div>
+                  <div class="text-xs text-neutral-500">Social support & activities</div>
+                  <div class="text-xs text-green-600 font-medium">From $18/h</div>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-xl border p-4 cursor-pointer hover:bg-orange-50 hover:border-orange-300 transition-all" onclick="selectService('Rehab')">
+              <div class="flex items-center gap-3">
+                <div class="size-10 grid place-items-center rounded-lg bg-orange-100 text-orange-600">
+                  <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <div class="font-medium text-sm">RN Nurse</div>
+                  <div class="text-xs text-neutral-500">Nursing</div>
+                  <div class="text-xs text-green-600 font-medium">From $95/h</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Promotional Banner -->
+        <div class="rounded-2xl border bg-gradient-to-r from-emerald-50 to-green-50 p-4 border-emerald-200">
+          <div class="flex items-center gap-3">
+            <div class="size-10 grid place-items-center rounded-lg bg-emerald-100 text-emerald-600">
+              <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-medium text-emerald-800">New User Special</p>
+              <p class="text-xs text-emerald-700">Get $20 off your first booking • Use code WELCOME20</p>
+            </div>
+            <button onclick="applyPromo('WELCOME20')" class="text-xs px-3 py-1 rounded-lg bg-emerald-600 text-white font-medium">Apply</button>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="rounded-2xl border bg-white p-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold">Recent Orders</h3>
+            <button data-sub="c-orders" class="c-sub text-xs text-blue-600" onclick="showClientSub('c-orders')">View All</button>
+          </div>
+          <ul id="homeRecent" class="mt-2 space-y-2 text-sm"></ul>
+        </div>
+
+      </div>
+
+      <!-- SERVICES -->
+      <div id="c-services" class="hidden space-y-3">
+        <div class="rounded-2xl border bg-white p-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold">Service Options</h3>
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200" id="selectedServiceType">CCA Care</span>
+            </div>
+          </div>
+          
+          <!-- Price Range Options -->
+          <div class="mt-3 space-y-3">
+            <!-- Regular Option -->
+            <div class="rounded-xl border p-4 cursor-pointer hover:bg-green-50 hover:border-green-300 transition-all" onclick="selectPriceRange('regular')">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="size-10 grid place-items-center rounded-lg bg-green-100 text-green-600">
+                    <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-medium text-sm">Regular</div>
+                    <div class="text-xs text-neutral-500">Standard care with experienced caregivers</div>
+                    <div class="text-xs text-green-600 font-medium">From $28/h</div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-semibold text-green-600">$28-35/h</div>
+                  <div class="text-xs text-neutral-500">2-4 hours</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Premium Option -->
+            <div class="rounded-xl border p-4 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all" onclick="selectPriceRange('premium')">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="size-10 grid place-items-center rounded-lg bg-blue-100 text-blue-600">
+                    <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-medium text-sm">Premium</div>
+                    <div class="text-xs text-neutral-500">Specialized care with certified professionals</div>
+                    <div class="text-xs text-blue-600 font-medium">From $45/h</div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-semibold text-blue-600">$45-65/h</div>
+                  <div class="text-xs text-neutral-500">4-8 hours</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Luxury Option -->
+            <div class="rounded-xl border p-4 cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-all" onclick="selectPriceRange('luxury')">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="size-10 grid place-items-center rounded-lg bg-purple-100 text-purple-600">
+                    <svg class="size-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-medium text-sm">Luxury</div>
+                    <div class="text-xs text-neutral-500">Premium care with RN/LPN nurses</div>
+                    <div class="text-xs text-purple-600 font-medium">From $75/h</div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-semibold text-purple-600">$75-95/h</div>
+                  <div class="text-xs text-neutral-500">8+ hours</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Selected Option Details -->
+          <div id="selectedOptionDetails" class="mt-4 hidden rounded-xl border bg-blue-50 border-blue-200 p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-semibold text-blue-900">Selected Option</h4>
+              <button onclick="proceedToBooking()" class="text-xs px-3 py-1 rounded-lg bg-blue-600 text-white font-medium">Continue to Booking</button>
+            </div>
+            <div id="optionDetails" class="text-sm text-blue-800">
+              <!-- Details will be populated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKING -->
+      <div id="c-book" class="hidden space-y-3">
+        <!-- Selected Caregiver Details -->
+        <div class="rounded-2xl border bg-white p-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold">Selected Caregiver</h3>
+            <div id="caregiverStatus" class="text-xs px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">
+              ✓ Selected
+            </div>
+          </div>
+          <div id="selectedCaregiverCard" class="mt-3">
+            <!-- Caregiver details will be populated here -->
+          </div>
+        </div>
+
+        <!-- Service Summary -->
+        <div class="rounded-2xl border bg-white p-4">
+          <h3 class="font-semibold">Booking Details</h3>
+          <div class="mt-2 grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] text-neutral-500">Service Type</label>
+              <div id="selectedServiceDisplay" class="mt-1 rounded-xl border px-3 py-2.5 text-sm bg-gray-50 text-gray-700">CCA Care - Regular</div>
+            </div>
+            <div>
+              <label class="block text-[11px] text-neutral-500">Duration Hours</label>
+              <select id="bkHours" class="w-full mt-1 rounded-xl border px-3 py-2.5 text-sm">
+                <option value="1">1 hour</option>
+                <option value="2">2 hours</option>
+                <option value="3">3 hours</option>
+                <option value="4" selected>4 hours</option>
+                <option value="6">6 hours</option>
+                <option value="8">8 hours</option>
+                <option value="12">12 hours</option>
+                <option value="24">24 hours</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Day Selection -->
+          <div class="mt-3">
+            <label class="block text-[11px] text-neutral-500 mb-2">Select Days</label>
+            <div class="grid grid-cols-7 gap-2">
+              <button class="day-btn chip text-xs py-2 px-1" data-day="monday" onclick="selectDay('monday')">Mon</button>
+              <button class="day-btn chip text-xs py-2 px-1" data-day="tuesday" onclick="selectDay('tuesday')">Tue</button>
+              <button class="day-btn chip text-xs py-2 px-1" data-day="wednesday" onclick="selectDay('wednesday')">Wed</button>
+              <button class="day-btn chip text-xs py-2 px-1" data-day="thursday" onclick="selectDay('thursday')">Thu</button>
+              <button class="day-btn chip text-xs py-2 px-1" data-day="friday" onclick="selectDay('friday')">Fri</button>
+              <button class="day-btn chip text-xs py-2 px-1" data-day="saturday" onclick="selectDay('saturday')">Sat</button>
+              <button class="day-btn chip text-xs py-2 px-1" data-day="sunday" onclick="selectDay('sunday')">Sun</button>
+            </div>
+            <div class="mt-2 text-xs text-neutral-500">
+              <span id="selectedDaysText">Select days for recurring service</span>
+            </div>
+          </div>
+
+          <!-- Frequently Ordered -->
+          <div class="mt-3">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-medium">Frequently Ordered</p>
+              <button id="saveTemplate" class="text-xs text-blue-600">Save as Template</button>
+            </div>
+            <div id="templateChips" class="mt-2 flex flex-wrap gap-2"></div>
+            <div class="mt-2 space-y-2">
+              <div class="text-xs text-neutral-500 font-medium">Quick Templates:</div>
+              <div class="grid grid-cols-1 gap-2">
+                <button class="template-btn flex items-center justify-between p-3 rounded-xl border bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 transition-all duration-200 active:scale-95" data-quick="weekdays-9-4" onclick="applyTemplate('weekdays', '9:00', '4')">
+                  <div class="flex items-center gap-3">
+                    <div class="size-8 grid place-items-center rounded-lg bg-blue-100 text-blue-600">
+                      <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                      </svg>
+                    </div>
+                    <div class="text-left">
+                      <div class="text-sm font-medium text-blue-900">Weekdays</div>
+                      <div class="text-xs text-blue-700">Mon-Fri • 9:00 AM • 4 hours</div>
+                    </div>
+                  </div>
+                  <div class="text-xs text-blue-600 font-medium">Apply</div>
+                </button>
+                
+                <button class="template-btn flex items-center justify-between p-3 rounded-xl border bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 hover:from-green-100 hover:to-emerald-100 hover:border-green-300 transition-all duration-200 active:scale-95" data-quick="weekends-10-6" onclick="applyTemplate('weekends', '10:00', '6')">
+                  <div class="flex items-center gap-3">
+                    <div class="size-8 grid place-items-center rounded-lg bg-green-100 text-green-600">
+                      <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                      </svg>
+                    </div>
+                    <div class="text-left">
+                      <div class="text-sm font-medium text-green-900">Weekends</div>
+                      <div class="text-xs text-green-700">Sat-Sun • 10:00 AM • 6 hours</div>
+                    </div>
+                  </div>
+                  <div class="text-xs text-green-600 font-medium">Apply</div>
+                </button>
+                
+                <button class="template-btn flex items-center justify-between p-3 rounded-xl border bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200 hover:from-purple-100 hover:to-violet-100 hover:border-purple-300 transition-all duration-200 active:scale-95" data-quick="daily-14-8" onclick="applyTemplate('daily', '14:00', '8')">
+                  <div class="flex items-center gap-3">
+                    <div class="size-8 grid place-items-center rounded-lg bg-purple-100 text-purple-600">
+                      <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                      </svg>
+                    </div>
+                    <div class="text-left">
+                      <div class="text-sm font-medium text-purple-900">Daily Care</div>
+                      <div class="text-xs text-purple-700">Every day • 2:00 PM • 8 hours</div>
+                    </div>
+                  </div>
+                  <div class="text-xs text-purple-600 font-medium">Apply</div>
+                </button>
+                
+               
+                
+                
+              </div>
+            </div>
+          </div>
+
+          <!-- Date & Time -->
+          <div class="mt-3 grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] text-neutral-500">Date</label>
+              <input id="bkDate" type="date" class="w-full mt-1 rounded-xl border px-3 py-2.5 text-sm">
+            </div>
+            <div>
+              <label class="block text-[11px] text-neutral-500">Start Time</label>
+              <input id="bkTime" type="time" value="14:00" class="w-full mt-1 rounded-xl border px-3 py-2.5 text-sm">
+            </div>
+          </div>
+
+          <!-- Address & Preferences -->
+          <div class="mt-3 grid grid-cols-1 gap-3">
+            <div>
+              <label class="block text-[11px] text-neutral-500">Address</label>
+              <input id="bkAddr" placeholder="Street/Floor/Access Parking tips" class="w-full mt-1 rounded-xl border px-3 py-2.5 text-sm">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] text-neutral-500">Language Preference</label>
+                <select id="prefLang" class="w-full mt-1 rounded-xl border px-3 py-2.5 text-sm">
+                  <option>Any</option><option>English</option><option>中文</option><option>Français</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] text-neutral-500">Gender Preference</label>
+                <select id="prefGender" class="w-full mt-1 rounded-xl border px-3 py-2.5 text-sm">
+                  <option>Any</option><option>Female</option><option>Male</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[11px] text-neutral-500">Special Notes</label>
+              <input id="bkNotes" placeholder="Pets/Accessibility/PIN" class="w-full mt-1 rounded-xl border px-3 py-2.5 text-sm">
+            </div>
+          </div>
+
+          <!-- Pricing -->
+          <div class="mt-3 flex items-center justify-between">
+            <button class="chip" onclick="showPricingModal()">Pricing Details</button>
+            <button id="bookPay"  onclick="bookService()" class="tap rounded-xl bg-blue-600 text-white px-4 py-2 font-medium active:translate-y-px hover:bg-blue-700 transition-colors">Confirm & Pay</button>
+          </div>
+          
+          <!-- Booking Status -->
+          <div id="bookingStatus" class="mt-3 hidden rounded-xl border bg-green-50 border-green-200 p-3">
+            <div class="flex items-center gap-2">
+              <div class="size-6 grid place-items-center rounded-full bg-green-100 text-green-600">
+                <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="text-sm font-medium text-green-800">Ready to book!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Match + Status -->
+        <div id="matchCard" class="hidden rounded-2xl border bg-white overflow-hidden">
+          <div class="p-4">
+            <div class="flex items-center gap-3">
+              <div id="cgAvatar" class="size-12 grid place-items-center rounded-xl bg-blue-50 text-blue-700 font-semibold">JR</div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <p id="cgName" class="font-semibold">Care Giver</p>
+                  <span class="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">✅ Background Check</span>
+                </div>
+                <p id="cgMeta" class="text-xs text-neutral-500 mt-0.5">2.1 km • Dementia • 4.9★ (86)</p>
+              </div>
+            </div>
+            <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
+              <div class="rounded-xl border p-2 text-center">
+                <div class="text-[11px] text-neutral-500">Next Available</div>
+                <div id="cgNext" class="font-medium">2:00 PM</div>
+              </div>
+              <div class="rounded-xl border p-2 text-center">
+                <div class="text-[11px] text-neutral-500">Rate</div>
+                <div><span id="rate" class="font-medium">28</span>/hr</div>
+              </div>
+              <div class="rounded-xl border p-2 text-center">
+                <div class="text-[11px] text-neutral-500">Distance</div>
+                <div id="cgKm" class="font-medium">2.1 km</div>
+              </div>
+            </div>
+          </div>
+          <div class="h-28 bg-gradient-to-br from-blue-50 to-indigo-50 grid place-items-center text-sm text-blue-700 border-t">Map preview</div>
+
+          <div class="p-4 grid grid-cols-2 gap-2">
+            <button id="openPay" class="rounded-xl border py-2.5 font-medium hover:bg-neutral-50">Pay</button>
+            <button id="openOrder" class="rounded-xl bg-blue-600 text-white py-2.5 font-medium">View Order</button>
+          </div>
+        </div>
+
+        <div id="statusCard" class="hidden rounded-2xl border bg-white p-4">
+          <h3 class="font-semibold">Order Status</h3>
+          <ol id="timeline" class="mt-2 space-y-2"></ol>
+          <div class="mt-3 grid grid-cols-3 gap-2">
+            <button id="btnCall" class="rounded-xl border py-2.5 text-sm">Call</button>
+            <button id="btnChat" class="rounded-xl border py-2.5 text-sm">Chat</button>
+            <button id="btnCancel" class="rounded-xl bg-red-600 text-white py-2.5 text-sm">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORDERS -->
+      <div id="c-orders" class="hidden space-y-3">
+        <div class="rounded-2xl border bg-white p-4">
+          <h3 class="font-semibold">My Orders</h3>
+          <ul id="orderList" class="mt-2 space-y-2 text-sm"></ul>
+        </div>
+      </div>
+
+      <!-- ME -->
+      <div id="c-me" class="hidden space-y-3">
+        <!-- Profile Information -->
+        <div class="rounded-2xl border bg-white p-4">
+          <h3 class="font-semibold">My Information</h3>
+          <div class="mt-3 space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="size-12 grid place-items-center rounded-xl bg-blue-50 text-blue-700 font-semibold text-lg">OM</div>
+              <div>
+                <div class="font-medium">Old Man</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <div class="text-neutral-500">Email</div>
+                <div class="font-medium">Old.Man@email.com</div>
+              </div>
+              <div>
+                <div class="text-neutral-500">Phone</div>
+                <div class="font-medium">+1 (902) 123-4567</div>
+              </div>
+              <div>
+                <div class="text-neutral-500">Emergency Contact</div>
+                <div class="font-medium">Old Lady (+1 902-987-6543)</div>
+              </div>
+              <div>
+                <div class="text-neutral-500">Preferred Language</div>
+                <div class="font-medium">English</div>
+              </div>
+            </div>
+            <button class="w-full rounded-xl border py-2.5 text-sm font-medium">Edit Profile</button>
+          </div>
+        </div>
+
+        <!-- Saved Payment Cards -->
+        <div class="rounded-2xl border bg-white p-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold">Saved Cards</h3>
+            <button class="text-xs text-blue-600">Add New</button>
+          </div>
+          <div class="mt-3 space-y-2">
+            <div class="rounded-xl border p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="size-8 grid place-items-center rounded-lg bg-blue-50 text-blue-600 font-bold text-xs">V</div>
+                <div>
+                  <div class="text-sm font-medium">Visa •••• 1111</div>
+                  <div class="text-xs text-neutral-500">Expires 12/26</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Default</span>
+                <button class="text-xs text-neutral-500">Edit</button>
+              </div>
+            </div>
+            <div class="rounded-xl border p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="size-8 grid place-items-center rounded-lg bg-red-50 text-red-600 font-bold text-xs">M</div>
+                <div>
+                  <div class="text-sm font-medium">Mastercard •••• 2222</div>
+                  <div class="text-xs text-neutral-500">Expires 08/27</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="text-xs text-blue-600">Set Default</button>
+                <button class="text-xs text-neutral-500">Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location Settings -->
+        <div class="rounded-2xl border bg-white p-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold">Location Settings</h3>
+            <button class="text-xs text-blue-600">Add Location</button>
+          </div>
+          <div class="mt-3 space-y-2">
+            <div class="rounded-xl border p-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="size-8 grid place-items-center rounded-lg bg-green-50 text-green-600">
+                    <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium">Home</div>
+                    <div class="text-xs text-neutral-500">123 Main Street, Halifax, NS B3H 3J5</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Default</span>
+                  <button class="text-xs text-neutral-500">Edit</button>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-xl border p-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="size-8 grid place-items-center rounded-lg bg-blue-50 text-blue-600">
+                    <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 6a2 2 0 114 0 2 2 0 01-4 0zm8 0a2 2 0 114 0 2 2 0 01-4 0z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="text-sm font-medium">Office</div>
+                    <div class="text-xs text-neutral-500">456 Business Ave, Halifax, NS B3H 2K9</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button class="text-xs text-blue-600">Set Default</button>
+                  <button class="text-xs text-neutral-500">Edit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="rounded-2xl border bg-white p-4">
+          <h3 class="font-semibold">Account Settings</h3>
+          <div class="mt-3 space-y-2">
+            <div class="flex items-center justify-between py-2">
+              <div class="text-sm">Invoice email: Old.Man@email.com</div>
+              <button class="text-xs text-blue-600">Change</button>
+            </div>
+            <div class="flex items-center justify-between py-2">
+              <div class="text-sm">Notification Settings</div>
+              <button class="text-xs text-blue-600">Manage</button>
+            </div>
+            <div class="flex items-center justify-between py-2">
+              <div class="text-sm">App Version</div>
+              <div class="text-xs text-neutral-500">v2.1.0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Bars (role-specific) -->
+  <footer class="sticky bottom-0 z-40 border-t bg-white/95 backdrop-blur">
+    <!-- Client Bar -->
+    <div id="bar-client" class="mx-auto phone safe-footer grid grid-cols-5">
+      <button data-sub="c-home" class="c-sub flex flex-col items-center justify-center text-[11px] py-2.5 text-blue-600" onclick="showClientSub('c-home')">Home</button>
+      <button data-sub="c-services" class="c-sub flex flex-col items-center justify-center text-[11px] py-2.5 text-neutral-500" onclick="showClientSub('c-services')">Services</button>
+      <button data-sub="c-book" class="c-sub flex flex-col items-center justify-center text-[11px] py-2.5 text-neutral-500" onclick="showClientSub('c-book')">Book</button>
+      <button data-sub="c-orders" class="c-sub flex flex-col items-center justify-center text-[11px] py-2.5 text-neutral-500" onclick="showClientSub('c-orders')">Orders</button>
+      <button data-sub="c-me" class="c-sub flex flex-col items-center justify-center text-[11px] py-2.5 text-neutral-500" onclick="showClientSub('c-me')">Profile</button>
+    </div>
+  </footer>
+</div>
+
+<!-- Pricing Details Modal -->
+<div id="pricingModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <!-- Modal Header -->
+    <div class="sticky top-0 bg-white border-b px-6 py-4 rounded-t-2xl">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold">Pricing Details</h3>
+        <button onclick="closePricingModal()" class="text-neutral-400 hover:text-neutral-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Modal Content -->
+    <div class="p-6 space-y-4">
+      <!-- Service Summary -->
+      <div class="rounded-xl border bg-blue-50 border-blue-200 p-4">
+        <h4 class="font-semibold text-blue-900 mb-2">Service Summary</h4>
+        <div class="space-y-1 text-sm text-blue-800">
+          <div id="modalServiceType">CCA Care - Regular</div>
+          <div id="modalCaregiver">Sarah Johnson</div>
+          <div id="modalDuration">4 hours</div>
+          <div id="modalDate">Today at 2:00 PM</div>
+        </div>
+      </div>
+      
+      <!-- Pricing Breakdown -->
+      <div class="space-y-3">
+        <h4 class="font-semibold">Cost Breakdown</h4>
+        
+        <!-- Base Rate -->
+        <div class="flex justify-between items-center py-2 border-b border-neutral-100">
+          <div>
+            <div class="text-sm font-medium">Base Rate</div>
+            <div class="text-xs text-neutral-500" id="modalBaseRate">$32/hour × 4 hours</div>
+          </div>
+          <div class="text-sm font-semibold" id="modalBaseTotal">$128.00</div>
+        </div>
+        
+        <!-- Platform Fee -->
+        <div class="flex justify-between items-center py-2 border-b border-neutral-100">
+          <div>
+            <div class="text-sm font-medium">Platform Fee</div>
+            <div class="text-xs text-neutral-500">Service & support</div>
+          </div>
+          <div class="text-sm font-semibold" id="modalPlatformFee">$12.80</div>
+        </div>
+        
+        <!-- Tax -->
+        <div class="flex justify-between items-center py-2 border-b border-neutral-100">
+          <div>
+            <div class="text-sm font-medium">HST (15%)</div>
+            <div class="text-xs text-neutral-500">Harmonized Sales Tax</div>
+          </div>
+          <div class="text-sm font-semibold" id="modalTax">$21.12</div>
+        </div>
+        
+        <!-- Total -->
+        <div class="flex justify-between items-center py-3 bg-green-50 rounded-xl px-4">
+          <div class="text-base font-semibold text-green-800">Total</div>
+          <div class="text-lg font-bold text-green-800" id="modalTotal">$161.92</div>
+        </div>
+      </div>
+      
+      <!-- Additional Info -->
+      <div class="rounded-xl border bg-neutral-50 p-4">
+        <h4 class="font-semibold text-sm mb-2">Payment Information</h4>
+        <div class="space-y-2 text-xs text-neutral-600">
+          <div>• Payment processed securely</div>
+          <div>• Receipt sent to your email</div>
+          <div>• Cancel up to 2 hours before service</div>
+          <div>• 24/7 customer support included</div>
+        </div>
+      </div>
+      
+      <!-- Promo Code -->
+      <div class="rounded-xl border p-4">
+        <h4 class="font-semibold text-sm mb-2">Promo Code</h4>
+        <div class="flex gap-2">
+          <input type="text" id="promoCodeInput" placeholder="Enter code" class="flex-1 rounded-lg border px-3 py-2 text-sm">
+          <button onclick="applyPromoCode()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium">Apply</button>
+        </div>
+        <div id="promoStatus" class="mt-2 text-xs"></div>
+      </div>
+    </div>
+    
+    <!-- Modal Footer -->
+    <div class="sticky bottom-0 bg-white border-t px-6 py-4 rounded-b-2xl">
+      <div class="flex gap-3">
+        <button onclick="closePricingModal()" class="flex-1 py-3 border rounded-xl font-medium hover:bg-neutral-50">Close</button>
+        <button onclick="proceedToPayment()" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">Proceed to Payment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Progress Modal -->
+<div id="bookingProgressModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl max-w-md w-full p-6">
+    <!-- Modal Header -->
+    <div class="text-center mb-6">
+      <div class="size-16 mx-auto mb-4 grid place-items-center rounded-full bg-blue-100">
+        <svg class="size-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900">Processing Your Booking</h3>
+      <p class="text-sm text-gray-600 mt-1">Please wait while we find the best caregiver for you</p>
+    </div>
+    
+    <!-- Progress Steps -->
+    <div class="space-y-4">
+      <!-- Step 1: Finding Caregiver -->
+      <div class="flex items-center gap-3">
+        <div id="step1-icon" class="size-8 grid place-items-center rounded-full bg-gray-100 text-gray-400">
+          <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <div class="text-sm font-medium text-gray-900">Finding Available Caregivers</div>
+          <div class="text-xs text-gray-500">Searching nearby professionals...</div>
+        </div>
+        <div id="step1-status" class="text-xs text-gray-400">Pending</div>
+      </div>
+      
+      <!-- Step 2: Selecting Caregiver -->
+      <div class="flex items-center gap-3">
+        <div id="step2-icon" class="size-8 grid place-items-center rounded-full bg-gray-100 text-gray-400">
+          <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <div class="text-sm font-medium text-gray-900">Selecting Best Match</div>
+          <div class="text-xs text-gray-500">Matching your requirements...</div>
+        </div>
+        <div id="step2-status" class="text-xs text-gray-400">Pending</div>
+      </div>
+      
+      <!-- Step 3: Confirming Booking -->
+      <div class="flex items-center gap-3">
+        <div id="step3-icon" class="size-8 grid place-items-center rounded-full bg-gray-100 text-gray-400">
+          <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <div class="text-sm font-medium text-gray-900">Confirming Booking</div>
+          <div class="text-xs text-gray-500">Finalizing your appointment...</div>
+        </div>
+        <div id="step3-status" class="text-xs text-gray-400">Pending</div>
+      </div>
+      
+      <!-- Step 4: Complete -->
+      <div class="flex items-center gap-3">
+        <div id="step4-icon" class="size-8 grid place-items-center rounded-full bg-gray-100 text-gray-400">
+          <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <div class="text-sm font-medium text-gray-900">Booking Complete</div>
+          <div class="text-xs text-gray-500">Your caregiver is confirmed!</div>
+        </div>
+        <div id="step4-status" class="text-xs text-gray-400">Pending</div>
+      </div>
+    </div>
+    
+    <!-- Progress Bar -->
+    <div class="mt-6">
+      <div class="flex justify-between text-xs text-gray-500 mb-2">
+        <span>Progress</span>
+        <span id="progress-percentage">0%</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2">
+        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+      </div>
+    </div>
+    
+    <!-- Cancel Button -->
+    <div class="mt-6 text-center">
+      <button onclick="cancelBooking()" class="text-sm text-gray-500 hover:text-gray-700">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===========================
+   Dummy Data / State
+=========================== */
+const caregivers = [
+  { 
+    id:1, 
+    name:"Care Giver", 
+    initials:"JR", 
+    km:2.1, 
+    skills:["Dementia","ADLs"], 
+    rating:4.9, 
+    ratings:86, 
+    rate:28, 
+    next:"2:00 PM",
+    profile: {
+      age: 35,
+      experience: "8 years",
+      languages: ["English", "中文"],
+      certifications: ["CPR", "First Aid", "Dementia Care"],
+      bio: "Experienced caregiver with passion for helping seniors maintain independence.",
+      availability: "Mon-Fri 8AM-6PM, Weekends 10AM-4PM"
+    }
+  },
+  { 
+    id:2, 
+    name:"Sarah Johnson", 
+    initials:"SJ", 
+    km:1.8, 
+    skills:["Nursing","Medication"], 
+    rating:4.8, 
+    ratings:124, 
+    rate:45, 
+    next:"1:30 PM",
+    profile: {
+      age: 42,
+      experience: "12 years",
+      languages: ["English"],
+      certifications: ["RN License", "CPR", "Medication Management"],
+      bio: "Registered nurse specializing in home care and medication management.",
+      availability: "24/7 on-call, Regular shifts available"
+    }
+  },
+  { 
+    id:3, 
+    name:"Maria Garcia", 
+    initials:"MG", 
+    km:3.2, 
+    skills:["Companion","Activities"], 
+    rating:4.7, 
+    ratings:67, 
+    rate:25, 
+    next:"3:00 PM",
+    profile: {
+      age: 28,
+      experience: "5 years",
+      languages: ["English", "Spanish"],
+      certifications: ["Companion Care", "Activity Planning"],
+      bio: "Compassionate companion focused on social engagement and activities.",
+      availability: "Weekdays 9AM-5PM, Some evenings"
+    }
+  }
+];
+
+let matchIdx = 0;
+let currentBooking = null;
+let orders = [
+  {
+    id: 1,
+    service: "CCA Care - Regular",
+    caregiver: "Sarah Johnson",
+    date: "2024-12-15",
+    time: "14:00",
+    hours: 4,
+    rate: 32,
+    total: 128,
+    status: "completed"
+  },
+  {
+    id: 2,
+    service: "LPN Nursing - Premium",
+    caregiver: "Maria Garcia",
+    date: "2024-12-16",
+    time: "10:00",
+    hours: 6,
+    rate: 55,
+    total: 330,
+    status: "confirmed"
+  }
+];
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+function toast(msg){ 
+  // Simple notification - no alert
+  console.log("Notification:", msg);
+}
+
+function money(x){ 
+  return "$" + Number(x).toFixed(0); 
+}
+
+function todayISO(){ 
+  const d = new Date(); 
+  return d.toISOString().slice(0,10); 
+}
+
+function addDays(dateStr, n){ 
+  const d = new Date(dateStr); 
+  d.setDate(d.getDate()+n); 
+  return d.toISOString().slice(0,10); 
+}
+
+function weekday(d){ 
+  return new Date(d).getDay(); 
+}
+
+function showClientSub(id){
+  // Update tab buttons (both top and bottom)
+  $$('.c-sub').forEach(b => {
+    const on = b.dataset.sub === id;
+    
+    // Remove all active classes first
+    b.classList.remove('bg-white', 'shadow-sm', 'text-blue-600');
+    b.classList.add('text-neutral-500');
+    
+    // Add active classes if this is the selected tab
+    if (on) {
+      b.classList.add('bg-white', 'shadow-sm', 'text-blue-600');
+      b.classList.remove('text-neutral-500');
+    }
+  });
+  
+  // Hide all content sections
+  const contentSections = ['c-home', 'c-services', 'c-book', 'c-orders', 'c-me'];
+  contentSections.forEach(sectionId => {
+    const el = $(`#${sectionId}`);
+    if (el) {
+      el.classList.add('hidden');
+    }
+  });
+  
+  // Show selected section
+  const targetEl = $(`#${id}`);
+  if (targetEl) {
+    targetEl.classList.remove('hidden');
+  }
+}
+
+function refreshHomeRecent(){
+  const ul = $("#homeRecent"); 
+  ul.innerHTML = "";
+  orders.slice(0,3).forEach(o => {
+    const li = document.createElement("li");
+    li.className = "flex items-center justify-between py-2 border-b border-neutral-100 last:border-0";
+    li.innerHTML = `
+      <div>
+        <div class="font-medium">${o.service}</div>
+        <div class="text-xs text-neutral-500">${o.date} • ${o.caregiver}</div>
+      </div>
+      <div class="text-right">
+        <div class="text-sm font-medium">${money(o.total)}</div>
+        <div class="text-xs px-2 py-0.5 rounded-full ${o.status==='completed'?'bg-green-50 text-green-700':'bg-blue-50 text-blue-700'}">${o.status}</div>
+      </div>
+    `;
+    ul.appendChild(li);
+  });
+}
+
+function refreshOrderList(){
+  const ul = $("#orderList"); 
+  ul.innerHTML = "";
+  
+  if (orders.length === 0) {
+    ul.innerHTML = `
+      <li class="text-center py-8 text-neutral-500">
+        <div class="text-4xl mb-2">📋</div>
+        <div class="text-sm">No orders yet</div>
+        <div class="text-xs mt-1">Book your first service to get started</div>
+      </li>
+    `;
+    return;
+  }
+  
+  orders.forEach(o => {
+    const li = document.createElement("li");
+    li.className = "flex items-center justify-between py-3 border-b border-neutral-100 last:border-0";
+    li.innerHTML = `
+      <div class="flex-1">
+        <div class="font-medium text-sm">${o.service}</div>
+        <div class="text-xs text-neutral-500 mt-1">${o.caregiver} • ${o.date} at ${o.time}</div>
+        <div class="text-xs text-neutral-400 mt-1">${o.hours} hours • ${money(o.rate)}/hr</div>
+      </div>
+      <div class="text-right">
+        <div class="text-sm font-semibold">${money(o.total)}</div>
+        <div class="text-xs px-2 py-1 rounded-full ${o.status==='completed'?'bg-green-50 text-green-700 border border-green-200':o.status==='confirmed'?'bg-blue-50 text-blue-700 border border-blue-200':'bg-yellow-50 text-yellow-700 border border-yellow-200'}">${o.status}</div>
+      </div>
+    `;
+    ul.appendChild(li);
+  });
+}
+
+function renderCaregivers(){
+  const root = $("#caregiverList"); 
+  root.innerHTML = "";
+  caregivers.forEach(cg => {
+    const card = document.createElement("div");
+    card.className = "rounded-xl border p-4 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-all";
+    card.innerHTML = `
+      <div class="flex items-center gap-3">
+        <div class="size-12 grid place-items-center rounded-xl bg-blue-50 text-blue-700 font-semibold">${cg.initials}</div>
+        <div class="flex-1">
+          <div class="flex items-center justify-between">
+            <p class="font-semibold">${cg.name}</p>
+            <span class="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">✅ Verified</span>
+          </div>
+          <p class="text-xs text-neutral-500 mt-0.5">${cg.km} km • ${cg.skills.join(', ')} • ${cg.rating}★ (${cg.ratings})</p>
+        </div>
+      </div>
+      <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
+        <div class="rounded-xl border p-2 text-center">
+          <div class="text-[11px] text-neutral-500">Next Available</div>
+          <div class="font-medium">${cg.next}</div>
+        </div>
+        <div class="rounded-xl border p-2 text-center">
+          <div class="text-[11px] text-neutral-500">Rate</div>
+          <div><span class="font-medium">${cg.rate}</span>/hr</div>
+        </div>
+        <div class="rounded-xl border p-2 text-center">
+          <div class="text-[11px] text-neutral-500">Distance</div>
+          <div class="font-medium">${cg.km} km</div>
+        </div>
+      </div>
+      <div class="mt-3 grid grid-cols-2 gap-2">
+        <button onclick="viewCaregiverProfile('${cg.name}')" class="rounded-xl border py-2.5 font-medium hover:bg-neutral-50">View Profile</button>
+        <button onclick="selectCaregiver('${cg.name}', ${cg.rate})" class="rounded-xl bg-blue-600 text-white py-2.5 font-medium">Select</button>
+      </div>
+    `;
+    root.appendChild(card);
+  });
+}
+
+function selectCaregiver(name, rate){
+  showClientSub('c-book');
+  $("#bkService").value = "Home Care";
+  $("#bkHours").value = "4";
+  $("#bkDate").value = todayISO();
+  $("#bkTime").value = "14:00";
+  toast(`Selected ${name} at ${money(rate)}/hour`);
+}
+
+function viewCaregiverProfile(name){
+  const caregiver = caregivers.find(cg => cg.name === name);
+  if (!caregiver) return;
+  
+  window.selectedCaregiverProfile = caregiver;
+  alert(`Profile: ${caregiver.name}\nExperience: ${caregiver.profile.experience}\nLanguages: ${caregiver.profile.languages.join(', ')}\nBio: ${caregiver.profile.bio}`);
+}
+
+function selectService(serviceType){
+  showClientSub('c-services');
+  $("#selectedServiceType").textContent = serviceType;
+  toast(`Selected ${serviceType} service`);
+}
+
+let selectedPriceRange = null;
+let selectedCaregiver = null;
+
+function selectPriceRange(range){
+  selectedPriceRange = range;
+  
+  // Remove previous selection styling
+  $$('.rounded-xl.border.p-4.cursor-pointer').forEach(el => {
+    el.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50', 'border-blue-300');
+  });
+  
+  // Add selection styling to clicked element
+  event.currentTarget.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50', 'border-blue-300');
+  
+  // Show selected option details
+  const detailsDiv = $("#selectedOptionDetails");
+  const detailsContent = $("#optionDetails");
+  
+  let details = '';
+  let caregiver = null;
+  
+  switch(range) {
+    case 'regular':
+      details = `
+        <div class="space-y-2">
+          <div><strong>Regular Care Package</strong></div>
+          <div>• Experienced CCA caregivers</div>
+          <div>• Basic personal care assistance</div>
+          <div>• Light housekeeping</div>
+          <div>• Medication reminders</div>
+          <div>• Rate: $28-35/hour</div>
+        </div>
+      `;
+      caregiver = {
+        name: "Sarah Johnson",
+        initials: "SJ",
+        rating: 4.8,
+        reviews: 124,
+        experience: "5 years",
+        specialties: ["Personal Care", "Medication Management"],
+        rate: 32,
+        distance: "1.2 km",
+        nextAvailable: "2:00 PM",
+        languages: ["English"],
+        certifications: ["CCA", "CPR", "First Aid"]
+      };
+      break;
+    case 'premium':
+      details = `
+        <div class="space-y-2">
+          <div><strong>Premium Care Package</strong></div>
+          <div>• Certified LPN nurses</div>
+          <div>• Advanced medical care</div>
+          <div>• Vital signs monitoring</div>
+          <div>• Wound care</div>
+          <div>• Rate: $45-65/hour</div>
+        </div>
+      `;
+      caregiver = {
+        name: "Maria Garcia",
+        initials: "MG",
+        rating: 4.9,
+        reviews: 89,
+        experience: "8 years",
+        specialties: ["Nursing Care", "Wound Care", "Medication Administration"],
+        rate: 55,
+        distance: "2.1 km",
+        nextAvailable: "1:30 PM",
+        languages: ["English", "Spanish"],
+        certifications: ["LPN", "CPR", "Advanced Wound Care"]
+      };
+      break;
+    case 'luxury':
+      details = `
+        <div class="space-y-2">
+          <div><strong>Luxury Care Package</strong></div>
+          <div>• Registered Nurses (RN)</div>
+          <div>• 24/7 medical supervision</div>
+          <div>• Complex medical procedures</div>
+          <div>• Specialized equipment</div>
+          <div>• Rate: $75-95/hour</div>
+        </div>
+      `;
+      caregiver = {
+        name: "Dr. Emily Chen",
+        initials: "EC",
+        rating: 5.0,
+        reviews: 156,
+        experience: "12 years",
+        specialties: ["Critical Care", "Complex Medical Cases", "Family Medicine"],
+        rate: 85,
+        distance: "3.5 km",
+        nextAvailable: "3:00 PM",
+        languages: ["English", "中文"],
+        certifications: ["RN", "MD", "Critical Care Specialist"]
+      };
+      break;
+  }
+  
+  selectedCaregiver = caregiver;
+  detailsContent.innerHTML = details;
+  detailsDiv.classList.remove('hidden');
+  
+  toast(`Selected ${range} care package`);
+}
+
+function proceedToBooking(){
+  if (!selectedPriceRange || !selectedCaregiver) {
+    toast("Please select a care package first");
+    return;
+  }
+  
+  // Show the progress modal
+  showBookingProgress();
+}
+
+function displaySelectedCaregiver(){
+  if (!selectedCaregiver) return;
+  
+  const caregiverCard = $("#selectedCaregiverCard");
+  caregiverCard.innerHTML = `
+    <div class="rounded-xl border p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+      <div class="flex items-center gap-4">
+        <div class="size-16 grid place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold text-xl">
+          ${selectedCaregiver.initials}
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center justify-between">
+            <h4 class="font-semibold text-lg">${selectedCaregiver.name}</h4>
+            <span class="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">✅ Verified</span>
+          </div>
+          <p class="text-sm text-neutral-600 mt-1">${selectedCaregiver.experience} experience • ${selectedCaregiver.distance} away</p>
+          <div class="flex items-center gap-2 mt-2">
+            <div class="flex items-center gap-1">
+              <span class="text-yellow-500">★</span>
+              <span class="text-sm font-medium">${selectedCaregiver.rating}</span>
+              <span class="text-xs text-neutral-500">(${selectedCaregiver.reviews} reviews)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-4 grid grid-cols-3 gap-3 text-center">
+        <div class="rounded-xl border border-blue-200 bg-white p-3">
+          <div class="text-[11px] text-neutral-500">Next Available</div>
+          <div class="font-medium text-blue-700">${selectedCaregiver.nextAvailable}</div>
+        </div>
+        <div class="rounded-xl border border-blue-200 bg-white p-3">
+          <div class="text-[11px] text-neutral-500">Rate</div>
+          <div class="font-medium text-blue-700">$${selectedCaregiver.rate}/hr</div>
+        </div>
+        <div class="rounded-xl border border-blue-200 bg-white p-3">
+          <div class="text-[11px] text-neutral-500">Distance</div>
+          <div class="font-medium text-blue-700">${selectedCaregiver.distance}</div>
+        </div>
+      </div>
+      
+      <div class="mt-4 space-y-2">
+        <div class="text-sm font-medium text-blue-900">Specialties:</div>
+        <div class="flex flex-wrap gap-1">
+          ${selectedCaregiver.specialties.map(specialty => 
+            `<span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 border border-blue-200">${specialty}</span>`
+          ).join('')}
+        </div>
+        
+        <div class="text-sm font-medium text-blue-900 mt-3">Certifications:</div>
+        <div class="flex flex-wrap gap-1">
+          ${selectedCaregiver.certifications.map(cert => 
+            `<span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 border border-green-200">${cert}</span>`
+          ).join('')}
+        </div>
+        
+        <div class="text-sm font-medium text-blue-900 mt-3">Languages:</div>
+        <div class="flex flex-wrap gap-1">
+          ${selectedCaregiver.languages.map(lang => 
+            `<span class="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700 border border-purple-200">${lang}</span>`
+          ).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updateServiceDisplay(){
+  if (!selectedPriceRange) return;
+  
+  const serviceType = $("#selectedServiceType").textContent;
+  const rangeNames = {
+    'regular': 'Regular',
+    'premium': 'Premium', 
+    'luxury': 'Luxury'
+  };
+  
+  $("#selectedServiceDisplay").textContent = `${serviceType} - ${rangeNames[selectedPriceRange]}`;
+}
+
+function showAllServices() {
+  showClientSub('c-services');
+}
+
+function showAllCaregivers() {
+  showClientSub('c-services');
+}
+
+function applyPromo(code) {
+  toast(`Applied promo code: ${code}`);
+}
+
+function renderNearbyCaregivers() {
+  const container = $("#nearbyCaregivers");
+  container.innerHTML = "";
+  
+  caregivers.slice(0, 3).forEach(cg => {
+    const item = document.createElement("div");
+    item.className = "flex items-center gap-3 p-3 rounded-xl border hover:bg-blue-50 cursor-pointer";
+    item.innerHTML = `
+      <div class="size-10 grid place-items-center rounded-lg bg-blue-50 text-blue-600 font-semibold text-sm">${cg.initials}</div>
+      <div class="flex-1">
+        <div class="font-medium text-sm">${cg.name}</div>
+        <div class="text-xs text-neutral-500">${cg.km} km • ${cg.rating}★ • ${money(cg.rate)}/hr</div>
+      </div>
+      <div class="text-right">
+        <div class="text-xs text-green-600 font-medium">Available</div>
+        <div class="text-xs text-neutral-500">Next: ${cg.next}</div>
+      </div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function filterCaregivers(){
+  toast("Filter options would open here");
+}
+
+function bookService() {
+  console.log("bookService() called!");
+  
+  // Create a simple dummy order
+  const dummyOrder = {
+    id: Date.now(),
+    service: "CCA Care - Regular",
+    caregiver: "Sarah Johnson", 
+    date: "2024-12-20",
+    time: "14:00",
+    hours: 4,
+    rate: 32,
+    total: 128,
+    status: "confirmed",
+    orderNumber: `ORD-${Date.now().toString().slice(-6)}`
+  };
+  
+  // Add to orders array
+  orders.unshift(dummyOrder);
+  
+  // Update the orders list
+  refreshOrderList();
+  
+  // Show success message
+  toast("Order created successfully!");
+  
+  // Go directly to orders page
+  showClientSub('c-orders');
+  
+  console.log("Added order:", dummyOrder);
+  console.log("Total orders:", orders.length);
+}
+
+// Booking Progress Functions
+function showBookingProgress() {
+  const modal = $("#bookingProgressModal");
+  if (!modal) return;
+  
+  // Reset all steps
+  resetProgressSteps();
+  
+  // Show modal
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  
+  // Start the progress animation
+  startBookingProgress();
+}
+
+function resetProgressSteps() {
+  // Reset all step icons and status
+  for (let i = 1; i <= 4; i++) {
+    const icon = $(`#step${i}-icon`);
+    const status = $(`#step${i}-status`);
+    
+    if (icon) {
+      icon.className = "size-8 grid place-items-center rounded-full bg-gray-100 text-gray-400";
+    }
+    if (status) {
+      status.textContent = "Pending";
+      status.className = "text-xs text-gray-400";
+    }
+  }
+  
+  // Reset progress bar
+  const progressBar = $("#progress-bar");
+  const progressPercentage = $("#progress-percentage");
+  if (progressBar) progressBar.style.width = "0%";
+  if (progressPercentage) progressPercentage.textContent = "0%";
+}
+
+function startBookingProgress() {
+  const steps = [
+    { step: 1, delay: 0, duration: 1000 },
+    { step: 2, delay: 1000, duration: 1200 },
+    { step: 3, delay: 2200, duration: 1000 },
+    { step: 4, delay: 3200, duration: 800 }
+  ];
+  
+  steps.forEach(({ step, delay, duration }) => {
+    setTimeout(() => {
+      updateStepProgress(step);
+    }, delay);
+  });
+  
+  // Complete and redirect after 5 seconds
+  setTimeout(() => {
+    completeBooking();
+  }, 5000);
+}
+
+function updateStepProgress(stepNumber) {
+  const icon = $(`#step${stepNumber}-icon`);
+  const status = $(`#step${stepNumber}-status`);
+  
+  // Update icon to active state
+  if (icon) {
+    icon.className = "size-8 grid place-items-center rounded-full bg-blue-100 text-blue-600";
+  }
+  
+  // Update status
+  if (status) {
+    status.textContent = "In Progress";
+    status.className = "text-xs text-blue-600";
+  }
+  
+  // Update progress bar
+  const progress = (stepNumber / 4) * 100;
+  const progressBar = $("#progress-bar");
+  const progressPercentage = $("#progress-percentage");
+  
+  if (progressBar) {
+    progressBar.style.width = `${progress}%`;
+  }
+  if (progressPercentage) {
+    progressPercentage.textContent = `${Math.round(progress)}%`;
+  }
+  
+  // Mark as completed after a short delay
+  setTimeout(() => {
+    if (icon) {
+      icon.className = "size-8 grid place-items-center rounded-full bg-green-100 text-green-600";
+    }
+    if (status) {
+      status.textContent = "Completed";
+      status.className = "text-xs text-green-600";
+    }
+  }, 500);
+}
+
+function completeBooking() {
+  // Hide the progress modal
+  const modal = $("#bookingProgressModal");
+  if (modal) {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  
+  // Create the actual order
+  const newOrder = {
+    id: Date.now(),
+    service: `${selectedCaregiver.name} - ${selectedPriceRange}`,
+    caregiver: selectedCaregiver.name,
+    date: "2024-12-20",
+    time: "14:00",
+    hours: 4,
+    rate: selectedCaregiver.rate,
+    total: selectedCaregiver.rate * 4,
+    status: "confirmed",
+    orderNumber: `ORD-${Date.now().toString().slice(-6)}`
+  };
+  
+  // Add to orders
+  orders.unshift(newOrder);
+  refreshOrderList();
+  
+  // Show success and navigate
+  toast("Booking completed successfully!");
+  showClientSub('c-book');
+  displaySelectedCaregiver();
+  updateServiceDisplay();
+}
+
+function cancelBooking() {
+  const modal = $("#bookingProgressModal");
+  if (modal) {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  toast("Booking cancelled");
+}
+
+// Day Selection Functions
+let selectedDays = [];
+
+function selectDay(day) {
+  const dayBtn = $(`[data-day="${day}"]`);
+  const selectedDaysText = $("#selectedDaysText");
+  
+  if (selectedDays.includes(day)) {
+    // Remove day from selection
+    selectedDays = selectedDays.filter(d => d !== day);
+    dayBtn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+    dayBtn.classList.add('bg-white', 'text-neutral-700', 'border-neutral-300');
+  } else {
+    // Add day to selection
+    selectedDays.push(day);
+    dayBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+    dayBtn.classList.remove('bg-white', 'text-neutral-700', 'border-neutral-300');
+  }
+  
+  // Update selected days text
+  if (selectedDays.length === 0) {
+    selectedDaysText.textContent = 'Select days for recurring service';
+  } else if (selectedDays.length === 7) {
+    selectedDaysText.textContent = 'Daily service selected';
+  } else if (selectedDays.length === 5 && selectedDays.includes('monday') && selectedDays.includes('tuesday') && selectedDays.includes('wednesday') && selectedDays.includes('thursday') && selectedDays.includes('friday')) {
+    selectedDaysText.textContent = 'Weekdays selected';
+  } else if (selectedDays.length === 2 && selectedDays.includes('saturday') && selectedDays.includes('sunday')) {
+    selectedDaysText.textContent = 'Weekends selected';
+  } else {
+    const dayNames = selectedDays.map(d => d.charAt(0).toUpperCase() + d.slice(1, 3));
+    selectedDaysText.textContent = `Selected: ${dayNames.join(', ')}`;
+  }
+}
+
+// Template Application Functions
+function applyTemplate(templateType, time, hours) {
+  // Set duration
+  $("#bkHours").value = hours;
+  
+  // Set time
+  $("#bkTime").value = time;
+  
+  // Clear previous day selections
+  selectedDays = [];
+  $$('.day-btn').forEach(btn => {
+    btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+    btn.classList.add('bg-white', 'text-neutral-700', 'border-neutral-300');
+  });
+  
+  // Apply day selection based on template
+  switch(templateType) {
+    case 'weekdays':
+      ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
+        selectDay(day);
+      });
+      break;
+    case 'weekends':
+      ['saturday', 'sunday'].forEach(day => {
+        selectDay(day);
+      });
+      break;
+    case 'daily':
+      ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+        selectDay(day);
+      });
+      break;
+    case 'monday':
+      selectDay('monday');
+      break;
+    case 'friday':
+      selectDay('friday');
+      break;
+  }
+  
+  // Set date to next occurrence of selected day(s)
+  updateDateForSelectedDays();
+  
+  toast(`Applied ${templateType} template: ${time} for ${hours} hours`);
+}
+
+function updateDateForSelectedDays() {
+  if (selectedDays.length === 0) return;
+  
+  const today = new Date();
+  const todayDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  
+  // Convert our day names to day numbers
+  const dayNumbers = {
+    'sunday': 0, 'monday': 1, 'tuesday': 2, 'wednesday': 3,
+    'thursday': 4, 'friday': 5, 'saturday': 6
+  };
+  
+  const selectedDayNumbers = selectedDays.map(day => dayNumbers[day]);
+  
+  // Find the next occurrence of any selected day
+  let nextDate = new Date(today);
+  for (let i = 0; i < 7; i++) {
+    const checkDate = new Date(today);
+    checkDate.setDate(today.getDate() + i);
+    const checkDay = checkDate.getDay();
+    
+    if (selectedDayNumbers.includes(checkDay)) {
+      nextDate = checkDate;
+      break;
+    }
+  }
+  
+  $("#bkDate").value = nextDate.toISOString().slice(0, 10);
+}
+
+// Pricing Modal Functions
+function showPricingModal() {
+  const modal = $("#pricingModal");
+  if (!modal) return;
+  
+  // Update modal content with current booking details
+  updatePricingModalContent();
+  
+  // Show modal
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closePricingModal() {
+  const modal = $("#pricingModal");
+  if (!modal) return;
+  
+  modal.classList.add('hidden');
+  document.body.style.overflow = ''; // Restore scrolling
+}
+
+function updatePricingModalContent() {
+  // Get current booking details
+  const hours = parseInt($("#bkHours")?.value || 4);
+  const date = $("#bkDate")?.value || todayISO();
+  const time = $("#bkTime")?.value || "14:00";
+  const serviceType = $("#selectedServiceDisplay")?.textContent || "CCA Care - Regular";
+  const caregiverName = selectedCaregiver?.name || "Sarah Johnson";
+  const rate = selectedCaregiver?.rate || 32;
+  
+  // Calculate pricing
+  const baseTotal = rate * hours;
+  const platformFee = baseTotal * 0.10; // 10% platform fee
+  const subtotal = baseTotal + platformFee;
+  const tax = subtotal * 0.15; // 15% HST
+  const total = subtotal + tax;
+  
+  // Update service summary
+  $("#modalServiceType").textContent = serviceType;
+  $("#modalCaregiver").textContent = caregiverName;
+  $("#modalDuration").textContent = `${hours} hours`;
+  
+  // Format date display
+  const dateObj = new Date(date);
+  const formattedDate = dateObj.toLocaleDateString('en-US', { 
+    weekday: 'short', 
+    month: 'short', 
+    day: 'numeric' 
+  });
+  $("#modalDate").textContent = `${formattedDate} at ${time}`;
+  
+  // Update pricing breakdown
+  $("#modalBaseRate").textContent = `$${rate}/hour × ${hours} hours`;
+  $("#modalBaseTotal").textContent = `$${baseTotal.toFixed(2)}`;
+  $("#modalPlatformFee").textContent = `$${platformFee.toFixed(2)}`;
+  $("#modalTax").textContent = `$${tax.toFixed(2)}`;
+  $("#modalTotal").textContent = `$${total.toFixed(2)}`;
+}
+
+function applyPromoCode() {
+  const promoCode = $("#promoCodeInput")?.value?.trim();
+  const promoStatus = $("#promoStatus");
+  
+  if (!promoCode) {
+    promoStatus.textContent = "Please enter a promo code";
+    promoStatus.className = "mt-2 text-xs text-red-600";
+    return;
+  }
+  
+  // Check for valid promo codes
+  const validPromos = {
+    'WELCOME20': { discount: 20, type: 'fixed' },
+    'SAVE10': { discount: 10, type: 'percent' },
+    'FIRST15': { discount: 15, type: 'percent' }
+  };
+  
+  if (validPromos[promoCode.toUpperCase()]) {
+    const promo = validPromos[promoCode.toUpperCase()];
+    promoStatus.textContent = `✓ Promo code applied! ${promo.type === 'fixed' ? `$${promo.discount} off` : `${promo.discount}% off`}`;
+    promoStatus.className = "mt-2 text-xs text-green-600";
+    
+    // Update pricing with discount
+    updatePricingWithPromo(promo);
+  } else {
+    promoStatus.textContent = "Invalid promo code";
+    promoStatus.className = "mt-2 text-xs text-red-600";
+  }
+}
+
+function updatePricingWithPromo(promo) {
+  const hours = parseInt($("#bkHours")?.value || 4);
+  const rate = selectedCaregiver?.rate || 32;
+  
+  const baseTotal = rate * hours;
+  const platformFee = baseTotal * 0.10;
+  const subtotal = baseTotal + platformFee;
+  
+  // Apply discount
+  let discountAmount = 0;
+  if (promo.type === 'fixed') {
+    discountAmount = promo.discount;
+  } else {
+    discountAmount = subtotal * (promo.discount / 100);
+  }
+  
+  const discountedSubtotal = subtotal - discountAmount;
+  const tax = discountedSubtotal * 0.15;
+  const total = discountedSubtotal + tax;
+  
+  // Update display
+  $("#modalTotal").textContent = `$${total.toFixed(2)}`;
+  
+  // Add discount line if not already present
+  if (!$("#modalDiscount")) {
+    const taxRow = $("#modalTax").parentElement;
+    const discountRow = document.createElement('div');
+    discountRow.className = "flex justify-between items-center py-2 border-b border-neutral-100";
+    discountRow.innerHTML = `
+      <div>
+        <div class="text-sm font-medium text-green-600">Discount</div>
+        <div class="text-xs text-neutral-500">Promo code applied</div>
+      </div>
+      <div class="text-sm font-semibold text-green-600" id="modalDiscount">-$${discountAmount.toFixed(2)}</div>
+    `;
+    taxRow.parentElement.insertBefore(discountRow, taxRow);
+  } else {
+    $("#modalDiscount").textContent = `-$${discountAmount.toFixed(2)}`;
+  }
+}
+
+function proceedToPayment() {
+  closePricingModal();
+  toast("Redirecting to payment...");
+  
+  // Simulate payment processing
+  setTimeout(() => {
+    $("#bookPay").click(); // Trigger the existing booking flow
+  }, 1000);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+  // Set default date to today
+  $("#bkDate").value = todayISO();
+  
+  // Initialize with default caregiver if none selected
+  if (!selectedCaregiver) {
+    // Set a default caregiver for demo purposes
+    selectedCaregiver = {
+      name: "Sarah Johnson",
+      initials: "SJ",
+      rating: 4.8,
+      reviews: 124,
+      experience: "5 years",
+      specialties: ["Personal Care", "Medication Management"],
+      rate: 32,
+      distance: "1.2 km",
+      nextAvailable: "2:00 PM",
+      languages: ["English"],
+      certifications: ["CCA", "CPR", "First Aid"]
+    };
+    selectedPriceRange = 'regular';
+    
+    // Display the default caregiver
+    displaySelectedCaregiver();
+    updateServiceDisplay();
+  }
+  
+  
+  // Render initial data
+  renderCaregivers();
+  renderNearbyCaregivers();
+  refreshHomeRecent();
+  refreshOrderList();
+  
+  // Add click handlers for quick booking
+  $$('[data-quick]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const quick = btn.dataset.quick;
+      toast(`Quick booking: ${quick}`);
+    });
+  });
+  
+  // Add click handler for booking
+  $("#bookPay").addEventListener('click', () => {
+    const hours = $("#bkHours").value;
+    const date = $("#bkDate").value;
+    const time = $("#bkTime").value;
+    
+    console.log("Booking clicked - selectedCaregiver:", selectedCaregiver);
+    console.log("Hours:", hours, "Date:", date, "Time:", time);
+    
+    if (!selectedCaregiver) {
+      toast("Please select a care package first by going to Services tab");
+      return;
+    }
+    
+    if (!hours || !date || !time) {
+      toast("Please fill in all required fields (hours, date, time)");
+      return;
+    }
+    
+    // Create new order
+    const newOrder = {
+      id: Date.now(),
+      service: $("#selectedServiceDisplay").textContent || "CCA Care - Regular",
+      caregiver: selectedCaregiver.name,
+      date: date,
+      time: time,
+      hours: parseInt(hours),
+      rate: selectedCaregiver.rate,
+      total: selectedCaregiver.rate * parseInt(hours),
+      status: "confirmed"
+    };
+    
+    orders.unshift(newOrder);
+    refreshHomeRecent();
+    refreshOrderList();
+    
+    // Show success status
+    $("#bookingStatus").classList.remove('hidden');
+    $("#bookPay").textContent = "Booking Confirmed!";
+    $("#bookPay").classList.remove('bg-blue-600', 'hover:bg-blue-700');
+    $("#bookPay").classList.add('bg-green-600');
+    
+    toast(`Order confirmed with ${selectedCaregiver.name}! Total: ${money(newOrder.total)}`);
+    
+    // Show success message and redirect to orders
+    setTimeout(() => {
+      showClientSub('c-orders');
+    }, 2000);
+  });
+});
+</script>
+
+</body>
+</html>
